@@ -9,11 +9,11 @@ delivery_status: deployed
 owner: codex-root
 branch: main
 base_sha: 5b51133c1658acec4e09e2994ea49ebd7d00c489
-revision: 38
+revision: 39
 verification_head: none
 verification_source_hash: none
 verified_at: none
-updated_at: 2026-09-13T05:51:50Z
+updated_at: 2026-09-13T06:26:29Z
 ---
 
 # Active Task
@@ -72,7 +72,7 @@ Skip when: The task is unrelated to the current execution context.
 
 - Verification Evidence: 38 tests, ESLint, TypeScript production build, PWA generation, and diff validation pass locally for the no-wait non-Easy queue checkpoint.
 - Delivery Status: deployed
-- Delivery Evidence: GitHub Pages workflow 34741298583 successfully deployed App Guide commit 79e8771.
+- Delivery Evidence: GitHub Pages workflow 34742661817 successfully deployed spotlight App Guide commit b75f913.
 - Docs Updated: PRD, current state, change log, and active task.
 - Remaining Risk: Live phone acceptance of the revised no-wait queue remains pending.
 - Memory Promotion Decision: pending
