@@ -32,7 +32,7 @@ Complete and validate the private Supabase workflow while refining the applicati
 - Subject workspaces include Study modes for flashcards, quick review, missed questions, and mixed practice. Flashcards have a separate mobile-friendly setup where students choose mastery tiers, card count, and whether to shuffle the session; Again, Hard, Good, and Easy schedule the next review, while Easy also advances mastery by one tier.
 - During an active flashcard session, Again, Hard, and Good stay queued until rated Easy. They move ahead when their interval expires, or return immediately when no other card remains; Easy removes the card from the activity while preserving its future due schedule.
 - An active Flashcard or Quick Review question can be deleted with confirmation; deletion is synchronized to Supabase and local storage, preserves test-history snapshots, and keeps the remaining session position valid.
-- The sidebar includes an App Guide between Connect Google Classroom and Settings & Backup, with a six-step interactive walkthrough, progress tracking, and shortcuts to each relevant workflow.
+- The sidebar includes an App Guide between Connect Google Classroom and Settings & Backup. New accounts receive a one-time spotlight tour across the real app screens, while the guide page can replay the full tour or launch one specific section.
 - Authenticated account switches clear the previous account's IndexedDB cache before hydrating the new account, preventing cross-account local-data leakage.
 - Subject workspaces now show mastery progress, last-study date, and a Continue Test action; the sidebar shows offline, syncing, synced, or error status and retries on reconnect/focus.
 - Manual and bulk question saves now wait for confirmed private Supabase persistence before updating the local question bank, preventing phone uploads from appearing successful before cloud synchronization finishes.
@@ -53,7 +53,7 @@ Complete and validate the private Supabase workflow while refining the applicati
 - Marvin confirmed the real Google consent, course selection, and Classroom PDF discovery flow locally on 2026-09-05.
 - GitHub Pages deploys automatically from `main` and the live HTTPS site returns the app shell, PWA manifest, and service worker successfully.
 - The active-session card queue is covered by focused before-due, after-due, simultaneous-retry, non-Easy retention, and Easy-removal tests.
-- All 38 automated tests, ESLint, TypeScript production build, PWA generation, and diff validation pass after the local no-wait queue revision.
+- All 41 automated tests, ESLint, TypeScript production build, PWA generation, and diff validation pass after the spotlight App Guide revision.
 
 ## Known Issues
 

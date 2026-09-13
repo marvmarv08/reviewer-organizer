@@ -140,4 +140,4 @@ A saved due time and an active-session queue solve different problems. The datab
 
 ## 2026-09-13 — A useful app guide should lead to real actions
 
-A walkthrough is more helpful than a long instruction page when it breaks the workflow into small steps, shows visible progress, and links the student directly to the screen where each task happens. Reviewer Organizer keeps the guide optional and always available in the sidebar, so new users can learn at their own pace without interrupting returning users every time they sign in.
+A walkthrough becomes easier to understand when it teaches on top of the real interface. A spotlight dims unrelated areas, points to the current control, and explains why it matters. Reviewer Organizer stores only the tour's progress and completion flag—not fake study data—then lets the student replay the full tour or one section from App Guide. A visible exit matters because onboarding should guide the user without trapping them.

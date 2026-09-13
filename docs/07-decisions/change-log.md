@@ -236,6 +236,7 @@ Skip when: You only need the active task or current state.
 ## 2026-09-13 — Add an interactive new-user app guide
 
 - Change: Added an App Guide entry between Connect Google Classroom and Settings & Backup in the sidebar.
-- Change: Added a six-step walkthrough covering the dashboard, subjects, study materials, Google Classroom import, study modes, history, and backups, with progress, step navigation, helpful tips, and direct workflow shortcuts.
-- Evidence: lint, all thirty-eight automated tests, TypeScript checking, and the production PWA build passed.
+- Change: Upgraded the guide from a static step page to an Inventory-style spotlight tour that highlights the real interface and moves across Dashboard, Subjects, Google Classroom, Test History, and Settings & Backup.
+- Change: Added a full tour, individual section tours, a one-time automatic launch per signed-in account, completion memory, and an always-available exit control. No mock study records or forced actions are used.
+- Evidence: lint, all forty-one automated tests including focused tour-launch coverage, TypeScript checking, and the production PWA build passed.
 - Remaining risk: final visual acceptance on Marvin's target laptop and phone remains recommended.
