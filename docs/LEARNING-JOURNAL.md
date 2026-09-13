@@ -137,3 +137,7 @@ The displayed Again, Hard, Good, and Easy times are calculated from the card's c
 Time passing does not automatically cause React to render again. A due-card screen therefore needs a small clock signal: Reviewer Organizer recalculates every five seconds during setup, every second during an active session, and immediately when the app returns from the background.
 
 A saved due time and an active-session queue solve different problems. The database remembers *when* a card is due across restarts and devices, while the queue decides *where* that card appears on the current screen. Again, Hard, and Good use both during the current session; Easy intentionally leaves the current queue while its due date is preserved for a future session.
+
+## 2026-09-13 — A useful app guide should lead to real actions
+
+A walkthrough is more helpful than a long instruction page when it breaks the workflow into small steps, shows visible progress, and links the student directly to the screen where each task happens. Reviewer Organizer keeps the guide optional and always available in the sidebar, so new users can learn at their own pace without interrupting returning users every time they sign in.

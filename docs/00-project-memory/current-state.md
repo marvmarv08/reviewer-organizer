@@ -32,6 +32,7 @@ Complete and validate the private Supabase workflow while refining the applicati
 - Subject workspaces include Study modes for flashcards, quick review, missed questions, and mixed practice. Flashcards have a separate mobile-friendly setup where students choose mastery tiers, card count, and whether to shuffle the session; Again, Hard, Good, and Easy schedule the next review, while Easy also advances mastery by one tier.
 - During an active flashcard session, Again, Hard, and Good stay queued until rated Easy. They move ahead when their interval expires, or return immediately when no other card remains; Easy removes the card from the activity while preserving its future due schedule.
 - An active Flashcard or Quick Review question can be deleted with confirmation; deletion is synchronized to Supabase and local storage, preserves test-history snapshots, and keeps the remaining session position valid.
+- The sidebar includes an App Guide between Connect Google Classroom and Settings & Backup, with a six-step interactive walkthrough, progress tracking, and shortcuts to each relevant workflow.
 - Authenticated account switches clear the previous account's IndexedDB cache before hydrating the new account, preventing cross-account local-data leakage.
 - Subject workspaces now show mastery progress, last-study date, and a Continue Test action; the sidebar shows offline, syncing, synced, or error status and retries on reconnect/focus.
 - Manual and bulk question saves now wait for confirmed private Supabase persistence before updating the local question bank, preventing phone uploads from appearing successful before cloud synchronization finishes.
@@ -47,7 +48,7 @@ Complete and validate the private Supabase workflow while refining the applicati
 
 - Google OAuth now lists active Classroom courses and imports Drive PDFs from coursework, classwork materials, or Stream announcements into the signed-in student's private PDF library. Marvin confirmed the real local course/PDF flow before deployment on 2026-09-05.
 - Lint, seven automated tests, and production build pass after the 2026-08-31 interface update.
-- Questionnaire and note import validation are covered by focused tests; the application suite now contains nineteen passing tests.
+- Questionnaire and note import validation are covered by focused tests; the application suite now contains thirty-eight passing tests.
 - Production output serves the application shell, service worker, and install manifest successfully.
 - Marvin confirmed the real Google consent, course selection, and Classroom PDF discovery flow locally on 2026-09-05.
 - GitHub Pages deploys automatically from `main` and the live HTTPS site returns the app shell, PWA manifest, and service worker successfully.
@@ -72,4 +73,4 @@ Complete and validate the private Supabase workflow while refining the applicati
 
 ## Last Updated
 
-2026-09-08
+2026-09-13

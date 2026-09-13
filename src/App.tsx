@@ -180,6 +180,7 @@ function Layout({ userEmail }: { userEmail?: string } = {}) {
     { to: '/subjects', label: 'Subjects', icon: <BookOpen /> },
     { to: '/history', label: 'Test history', icon: <History /> },
     { to: '/classroom', label: 'Connect Google Classroom', icon: <School /> },
+    { to: '/guide', label: 'App guide', icon: <CircleHelp /> },
     { to: '/settings', label: 'Settings & backup', icon: <Settings /> },
   ]
   return (
@@ -203,6 +204,7 @@ function Layout({ userEmail }: { userEmail?: string } = {}) {
           <Route path="/review" element={<ReviewPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/classroom" element={<GoogleClassroomConnect />} />
+          <Route path="/guide" element={<AppGuidePage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>
@@ -735,6 +737,68 @@ function HistoryPage() {
   function responseText(answer: TestAnswer) { return answer.selectedAnswer || answer.choices?.find((choice) => choice.id === answer.selectedChoiceId)?.text || 'No answer' }
   function correctText(answer: TestAnswer) { return answer.correctAnswer || answer.choices?.find((choice) => choice.id === answer.correctChoiceId)?.text || 'Unavailable' }
   return <div className="page"><header className="page-header"><div><p className="eyebrow">Learning record</p><h1>Test history</h1><p>Review scores, typed answers, skipped questions, and manual level decisions.</p></div></header>{sessions.length ? <div className="history-list">{sessions.map((session) => <button key={session.id} onClick={() => setSelected(session)}><span className={session.percentage >= 75 ? 'score good' : 'score'}>{session.percentage}%</span><div><strong>{session.subjectName}</strong><small>{LEVEL_NAMES[session.level]} · {dateLabel(session.completedAt)}{session.skippedCount ? ` · ${session.skippedCount} skipped` : ''}</small></div><div className="history-count">{session.correctCount}/{session.questionCount}<ChevronRight /></div></button>)}</div> : <EmptyState icon={<History />} title="No test history" text="Open a subject's Question Bank and complete an identification test." action={<Link className="button primary" to="/subjects">Open subjects</Link>} />}{selected && <Modal title={`${selected.subjectName} · ${selected.percentage}%`} onClose={() => setSelected(null)}><div className="history-detail"><p>{LEVEL_NAMES[selected.level]} · {dateLabel(selected.completedAt)} · {selected.correctCount} correct · {selected.skippedCount ?? 0} skipped</p>{selected.answers.map((answer, index) => <article key={`${answer.questionId}-${index}`}><span className={answer.wasSkipped ? 'answer-mark skipped' : answer.wasCorrect ? 'answer-mark correct' : 'answer-mark wrong'}>{answer.wasSkipped ? <ChevronRight /> : answer.wasCorrect ? <Check /> : <X />}</span><div><strong>{answer.prompt}</strong><p>{answer.wasSkipped ? 'Skipped without answering' : `Your answer: ${responseText(answer)}`}</p>{!answer.wasCorrect && !answer.wasSkipped && <p>Correct answer: {correctText(answer)}</p>}<small>{answer.explanation}</small>{answer.levelBefore !== answer.levelAfter && <small className="history-move">Moved from {LEVEL_NAMES[answer.levelBefore]} to {LEVEL_NAMES[answer.levelAfter]}</small>}</div></article>)}</div></Modal>}</div>
+}
+
+// New-user walkthrough -----------------------------------------------------------
+const GUIDE_STEPS = [
+  {
+    title: 'Start from your dashboard',
+    text: 'The dashboard is your study command center. It gives you a quick view of every subject and lets you continue where you left off.',
+    tip: 'Return here whenever you want a simple overview of your study workspace.',
+    action: 'Open dashboard',
+    to: '/',
+    icon: <Home />,
+  },
+  {
+    title: 'Create your first subject',
+    text: 'Create one subject for each class or topic. Every subject keeps its own PDFs, notes, questions, study progress, and scores together.',
+    tip: 'Use a clear name such as “General Biology” so your materials stay easy to find.',
+    action: 'Open subjects',
+    to: '/subjects',
+    icon: <BookOpen />,
+  },
+  {
+    title: 'Add your study materials',
+    text: 'Open a subject and use its PDF Reviewers tab to upload a PDF. You can also add notes and build a question bank in the other tabs.',
+    tip: 'You need to create a subject before you can add study materials to it.',
+    action: 'Choose a subject',
+    to: '/subjects',
+    icon: <Upload />,
+  },
+  {
+    title: 'Connect Google Classroom',
+    text: 'Open Connect Google Classroom, sign in to Google, and select the active classes you want to copy into Reviewer Organizer as subjects.',
+    tip: 'Your class names and teacher names stay available in the app after you save the selected classes.',
+    action: 'Connect Google Classroom',
+    to: '/classroom',
+    icon: <GraduationCap />,
+  },
+  {
+    title: 'Review and test yourself',
+    text: 'Use flashcards for quick recall or take an identification test. Questions can move through mastery levels as your knowledge improves.',
+    tip: 'Add questions to a subject first, then open its Study Modes tab to begin reviewing.',
+    action: 'Choose a subject',
+    to: '/subjects',
+    icon: <CircleHelp />,
+  },
+  {
+    title: 'Check progress and protect your work',
+    text: 'Test History keeps your past results. Settings & Backup lets you download a recovery copy of your study data or restore an earlier backup.',
+    tip: 'Download a fresh backup regularly, especially after adding many notes or questions.',
+    action: 'Open settings & backup',
+    to: '/settings',
+    icon: <ShieldCheck />,
+  },
+]
+
+function AppGuidePage() {
+  const [stepIndex, setStepIndex] = useState(0)
+  const step = GUIDE_STEPS[stepIndex]
+  const isFirst = stepIndex === 0
+  const isLast = stepIndex === GUIDE_STEPS.length - 1
+  const progress = ((stepIndex + 1) / GUIDE_STEPS.length) * 100
+
+  return <div className="page guide-page"><header className="page-header"><div><p className="eyebrow">New user walkthrough</p><h1>App guide</h1><p>Follow these steps to learn the complete Reviewer Organizer workflow at your own pace.</p></div></header><section className="guide-layout"><nav className="guide-step-list" aria-label="Walkthrough steps">{GUIDE_STEPS.map((item, index) => <button key={item.title} className={index === stepIndex ? 'active' : index < stepIndex ? 'complete' : ''} onClick={() => setStepIndex(index)} aria-current={index === stepIndex ? 'step' : undefined}><span>{index < stepIndex ? <Check /> : index + 1}</span><strong>{item.title}</strong></button>)}</nav><section className="panel guide-card" aria-live="polite"><div className="guide-progress"><div><span>Step {stepIndex + 1} of {GUIDE_STEPS.length}</span><strong>{Math.round(progress)}% complete</strong></div><div className="bar" aria-hidden="true"><i style={{ width: `${progress}%` }} /></div></div><span className="guide-icon">{step.icon}</span><p className="eyebrow">Step {stepIndex + 1}</p><h2>{step.title}</h2><p className="guide-description">{step.text}</p><div className="guide-tip"><CheckCircle2 /><p><strong>Helpful tip</strong>{step.tip}</p></div><Link className="button ghost guide-link" to={step.to}>{step.action}<ChevronRight /></Link><footer className="guide-actions"><button className="button ghost" disabled={isFirst} onClick={() => setStepIndex((current) => current - 1)}><ArrowLeft /> Previous</button>{isLast ? <Link className="button primary" to="/">Finish guide <Check /></Link> : <button className="button primary" onClick={() => setStepIndex((current) => current + 1)}>Next step <ChevronRight /></button>}</footer></section></section></div>
 }
 
 // Backup and preferences ----------------------------------------------------------
