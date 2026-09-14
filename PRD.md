@@ -12,7 +12,8 @@ Reviewer Organizer is an installable, offline-first web application that helps s
 - Create, edit, filter, and delete identification questions with one primary answer, optional accepted alternatives, and an explanation.
 - Bulk-import ChatGPT-generated identification questions from a validated Reviewer Organizer JSON questionnaire, with duplicate warnings and a selectable preview before saving.
 - Run randomized tests for one subject and one mastery level at a time.
-- Offer subject review modes: configurable flashcards, quick review, missed-question review, and mixed practice across levels.
+- Offer subject review modes: configurable smart flashcards, simple flashcards, quick review, missed-question review, and mixed practice across levels.
+- Let students use Simple Flashcards with an automatically randomized question order to reveal an answer, move to the next question, or undo one question without changing mastery or review scheduling.
 - Let students select one or more mastery tiers, choose a card count, and optionally randomize question order before starting flashcards.
 - After revealing a flashcard answer, let the student rate it Again, Hard, Good, or Easy; Easy moves it forward one mastery tier.
 - Let the student manually keep a question at its current level or move it one level forward or backward after checking an answer.

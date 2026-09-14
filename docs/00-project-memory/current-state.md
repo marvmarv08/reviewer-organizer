@@ -29,7 +29,7 @@ Complete and validate the private Supabase workflow while refining the applicati
 - Notes import includes an in-app full-coverage ChatGPT prompt that requests page-by-page PDF review before producing import-ready notes.
 - Main dashboard now presents subjects only; each subject workspace contains its own PDF, question, mastery, score, and test summary.
 - Question Bank supports selecting visible questions and deleting a confirmed batch from Supabase and local storage.
-- Subject workspaces include Study modes for flashcards, quick review, missed questions, and mixed practice. Flashcards have a separate mobile-friendly setup where students choose mastery tiers, card count, and whether to shuffle the session; Again, Hard, Good, and Easy schedule the next review, while Easy also advances mastery by one tier.
+- Subject workspaces include Study modes for smart flashcards, simple flashcards, quick review, missed questions, and mixed practice. Simple Flashcards automatically randomize all questions once per session, reveal one answer at a time, and only move Next or Undo one question without changing mastery. Smart Flashcards have a separate mobile-friendly setup where students choose mastery tiers, card count, and whether to shuffle the session; Again, Hard, Good, and Easy schedule the next review, while Easy also advances mastery by one tier.
 - During an active flashcard session, Again, Hard, and Good stay queued until rated Easy. They move ahead when their interval expires, or return immediately when no other card remains; Easy removes the card from the activity while preserving its future due schedule.
 - An active Flashcard or Quick Review question can be deleted with confirmation; deletion is synchronized to Supabase and local storage, preserves test-history snapshots, and keeps the remaining session position valid.
 - Authenticated account switches clear the previous account's IndexedDB cache before hydrating the new account, preventing cross-account local-data leakage.
@@ -72,4 +72,4 @@ Complete and validate the private Supabase workflow while refining the applicati
 
 ## Last Updated
 
-2026-09-08
+2026-09-14

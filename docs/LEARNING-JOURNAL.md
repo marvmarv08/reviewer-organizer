@@ -2,6 +2,12 @@
 
 This journal records practical concepts learned while building the project. It intentionally excludes credentials, private student data, and noisy command logs.
 
+## 2026-09-14 — Navigation does not need to change study data
+
+Simple Flashcards uses temporary session state: one automatically shuffled copy of the question order, the current question number, and whether its answer is visible. Shuffling once is important because shuffling during every screen update would make Next and Undo unpredictable. Next and Undo only navigate the fixed session; they do not call the functions that save a question, schedule its next review, or move its mastery tier. This separation lets a student browse freely without accidental progress changes.
+
+Undo also resets the answer to hidden after returning one question. That keeps the learning cycle consistent: think first, reveal again, then choose the next direction. At the first card, Undo is visibly disabled because there is no earlier question.
+
 ## 2026-09-08 — Deleting from a study session affects two views
 
 A flashcard session is a temporary snapshot of questions selected from the permanent question bank. Deleting the active card must therefore remove both the stored question and its copy in the session. Quick Review reads the live question bank instead, but still needs its position adjusted after deletion. Keeping the same array position naturally advances to the next question, while deleting the last question requires moving the position back so the view never points past its end.

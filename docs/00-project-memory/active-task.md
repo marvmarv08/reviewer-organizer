@@ -9,11 +9,11 @@ delivery_status: deployed
 owner: codex-root
 branch: main
 base_sha: 5b51133c1658acec4e09e2994ea49ebd7d00c489
-revision: 37
+revision: 41
 verification_head: none
 verification_source_hash: none
 verified_at: none
-updated_at: 2026-09-08T16:32:27Z
+updated_at: 2026-09-14T01:30:02Z
 ---
 
 # Active Task
@@ -66,11 +66,11 @@ Skip when: The task is unrelated to the current execution context.
 - Last Failure: none
 - Failure Class: none
 - Attempted Fix: none
-- Next Concrete Action: Verify that non-Easy cards return immediately after the other cards are exhausted, while Easy is the only rating that removes a card from the activity.
+- Next Concrete Action: Manually accept the automatically randomized Simple Flashcards order on signed-in desktop and phone, including stable Next/Undo navigation and unchanged mastery.
 
 ## Record
 
-- Verification Evidence: 38 tests, ESLint, TypeScript production build, PWA generation, and diff validation pass locally for the no-wait non-Easy queue checkpoint.
+- Verification Evidence: pending after checkpoint
 - Delivery Status: deployed
 - Delivery Evidence: GitHub Pages workflow 34251493694 successfully deployed no-wait queue commit f24a3c1.
 - Docs Updated: PRD, current state, change log, and active task.

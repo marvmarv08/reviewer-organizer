@@ -4,6 +4,14 @@ Purpose: Chronological record of durable project behavior, requirement, implemen
 Read when: You need recent durable changes or must record a state-changing task.
 Skip when: You only need the active task or current state.
 
+## 2026-09-14 — Add mastery-neutral Simple Flashcards
+
+- Product choice: Named the new mode **Simple Flashcards** to distinguish its linear controls from the existing Anki-style **Smart Flashcards**.
+- Flow: Opening the mode automatically shuffles all questions once with no setup screen. Each card starts with only Reveal answer; after reveal, Undo returns exactly one question and Next advances or finishes the stable shuffled session.
+- Data safety: The mode does not call question-saving, scheduling, answer-recording, or mastery-changing functions, so navigation leaves the question bank unchanged.
+- Evidence: all 38 automated tests, ESLint, TypeScript production build, PWA generation, and diff validation pass locally.
+- Remaining risk: Manual signed-in desktop and phone interaction/visual acceptance remains pending because the interactive Playwright tool was unavailable in this session.
+
 ## 2026-09-09 — Repeat non-Easy cards without an idle countdown
 
 - Product rule: A flashcard activity finishes only when every selected card has been rated Easy.

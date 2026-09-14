@@ -135,6 +135,7 @@ h2 { font-size: 1.25rem; margin-bottom: .4rem; }
 .flashcard-card-actions { display: grid; justify-items: end; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }.flashcard-card-actions .form-error { width: 100%; }
 .srs-rating-panel { display: grid; gap: 13px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }.srs-rating-panel > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 12px; }.srs-rating-panel p { margin: 0; font-weight: 800; }.review-state { padding: 5px 9px; border-radius: 999px; color: #7b5500; background: #fff0d6; font-size: .67rem; font-weight: 850; text-transform: capitalize; }.review-state-review { color: #1755ba; background: #e8efff; }.review-state-mastered { color: #08714a; background: #dcf5ea; }.srs-rating-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }.srs-rating { min-width: 0; min-height: 66px; display: grid; place-content: center; gap: 4px; border: 1px solid var(--border); border-radius: 12px; background: white; cursor: pointer; }.srs-rating strong, .srs-rating small { display: block; }.srs-rating small { color: var(--muted); font-size: .7rem; }.srs-rating:hover { transform: translateY(-1px); box-shadow: 0 6px 16px #35101412; }.srs-again { color: #ad2637; border-color: #efb4bc; background: #fff5f6; }.srs-hard { color: #966000; border-color: #f0cf91; background: #fffaf0; }.srs-good { color: #126a4d; border-color: #a9ddc8; background: #f2fbf7; }.srs-easy { color: #1755ba; border-color: #b8cced; background: #f4f8ff; }.srs-rating-hint { color: var(--muted); line-height: 1.45; }
 .quick-review-actions { display: grid; grid-template-columns: auto auto; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; }.quick-review-actions .text-button { margin: 0; padding: 8px 4px; }.quick-review-actions .form-error { grid-column: 1 / -1; width: 100%; }
+.simple-flashcard-actions { display: grid; grid-template-columns: auto auto; justify-content: space-between; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
 
 /* Keep study-mode cards readable on narrow phone screens. These rules come
    after the shared card styles so the mobile layout cannot be overridden by
@@ -157,6 +158,7 @@ h2 { font-size: 1.25rem; margin-bottom: .4rem; }
   .flashcard-feature-icon { width: 48px; height: 48px; }
   .flashcard-level-grid, .flashcard-options { grid-template-columns: 1fr; }
   .srs-rating-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .simple-flashcard-actions .button { min-width: 0; }
   .flashcard-level-option { min-height: 104px; }
   .flashcard-setup-page .page-header h1 { font-size: 2rem; }
   .flashcard-setup { padding: 18px 14px; }
