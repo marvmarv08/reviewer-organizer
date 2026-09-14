@@ -72,7 +72,7 @@ Skip when: The task is unrelated to the current execution context.
 
 - Verification Evidence: pending after checkpoint
 - Delivery Status: deployed
-- Delivery Evidence: GitHub Pages workflow 34251493694 successfully deployed no-wait queue commit f24a3c1.
+- Delivery Evidence: GitHub Pages workflow 34742661817 successfully deployed spotlight App Guide commit b75f913.
 - Docs Updated: PRD, current state, change log, and active task.
 - Remaining Risk: Live phone acceptance of the revised no-wait queue remains pending.
 - Memory Promotion Decision: pending

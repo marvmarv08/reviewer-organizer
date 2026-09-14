@@ -7,7 +7,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import {
   AlertCircle, ArrowLeft, BarChart3, BookOpen, Check, CheckCircle2, ChevronRight, CircleHelp, Clock3, CloudOff, RefreshCw,
   Copy, Download,
-  FileText, GraduationCap, History, Home, Menu, NotebookPen, Pencil, Plus, School, Search,
+  FileText, GraduationCap, History, Home, Menu, NotebookPen, Pencil, Play, Plus, School, Search,
   Settings, ShieldCheck, Trash2, Upload, X,
 } from 'lucide-react'
 import { Link, NavLink, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -25,6 +25,7 @@ import { createPdfOpenUrl, createPdfReviewer, deletePdfReviewer, deleteSubjectPd
 import noteGeneratorPrompt from '../templates/chatgpt-notes-import-prompt.txt?raw'
 import { GoogleClassroomImport } from './GoogleClassroomImport'
 import { GoogleClassroomConnect } from './GoogleClassroomConnect'
+import { startFullTour, startTourAt, TOUR_PAGES, useOnboardingTour } from './onboarding-tour'
 
 const COLORS = ['#a51d25', '#7a171d', '#c74b50', '#d49a28', '#59636f', '#8b5e3c']
 const NOTE_LEVEL_NAMES: Record<NoteLevel, string> = { 1: 'Level 1 · Current', 2: 'Level 2 · Completed', 3: 'Final notes reviewer' }
@@ -90,7 +91,7 @@ function AuthGate() {
 
   if (!supabase) return <div className="auth-screen"><section className="auth-card"><div className="brand auth-brand"><span className="brand-mark"><Check /></span><div><strong>Reviewer</strong><small>Organizer</small></div></div><p className="eyebrow">Secure study space</p><h1>Sign in to continue</h1><p>The app is ready for accounts, but the Supabase connection is not configured in this copy yet.</p><div className="notice">Add <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> to this folder’s <code>.env.local</code>, then restart the dev server.</div></section></div>
   if (loading) return <div className="auth-screen"><div className="auth-card"><p>Loading your secure study space…</p></div></div>
-  if (session && mode !== 'update-password') return <Layout userEmail={session.user.email} />
+  if (session && mode !== 'update-password') return <Layout userId={session.user.id} userEmail={session.user.email} />
 
   async function submit(event: FormEvent) {
     event.preventDefault(); setError(''); setMessage('')
@@ -171,15 +172,17 @@ function EmptyState({ icon, title, text, action }: { icon: ReactNode; title: str
 }
 
 // Application shell: shared navigation, account controls, sync status, and routes.
-function Layout({ userEmail }: { userEmail?: string } = {}) {
+function Layout({ userId, userEmail }: { userId: string; userEmail?: string }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus())
   useEffect(() => subscribeToSyncStatus(setSyncStatus), [])
+  useOnboardingTour(userId)
   const links = [
     { to: '/', label: 'Dashboard', icon: <Home /> },
     { to: '/subjects', label: 'Subjects', icon: <BookOpen /> },
     { to: '/history', label: 'Test history', icon: <History /> },
     { to: '/classroom', label: 'Connect Google Classroom', icon: <School /> },
+    { to: '/guide', label: 'App guide', icon: <CircleHelp /> },
     { to: '/settings', label: 'Settings & backup', icon: <Settings /> },
   ]
   return (
@@ -203,6 +206,7 @@ function Layout({ userEmail }: { userEmail?: string } = {}) {
           <Route path="/review" element={<ReviewPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/classroom" element={<GoogleClassroomConnect />} />
+          <Route path="/guide" element={<AppGuidePage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>
@@ -215,8 +219,8 @@ function Dashboard() {
   const subjects = useLiveQuery(() => db.subjects.orderBy('name').toArray(), [])
   if (!subjects) return <p>Loading your study space…</p>
   return <div className="page">
-    <header className="page-header"><div><p className="eyebrow">Your study command center</p><h1>Choose a subject to begin</h1><p>Keep each subject's PDFs, notes, questions, mastery, and scores together in one workspace.</p></div><Link className="button primary" to="/subjects"><BookOpen /> Manage subjects</Link></header>
-    <section className="panel subjects-preview dashboard-subjects"><div className="section-heading"><div><p className="eyebrow">Your library</p><h2>Subjects</h2></div><Link to="/subjects">Manage subjects <ChevronRight /></Link></div>
+    <header className="page-header" data-tour="dashboard-header"><div><p className="eyebrow">Your study command center</p><h1>Choose a subject to begin</h1><p>Keep each subject's PDFs, notes, questions, mastery, and scores together in one workspace.</p></div><Link className="button primary" to="/subjects"><BookOpen /> Manage subjects</Link></header>
+    <section className="panel subjects-preview dashboard-subjects" data-tour="dashboard-subjects"><div className="section-heading"><div><p className="eyebrow">Your library</p><h2>Subjects</h2></div><Link to="/subjects">Manage subjects <ChevronRight /></Link></div>
       {subjects.length === 0 ? <EmptyState icon={<BookOpen />} title="Create your first subject" text="A subject keeps related PDFs, notes, questions, mastery, and scores together." action={<Link className="button primary" to="/subjects"><Plus /> Add subject</Link>} /> : <div className="card-grid">{subjects.map((subject) => <SubjectCard key={subject.id} subject={subject} />)}</div>}
     </section>
   </div>
@@ -266,7 +270,7 @@ function SubjectsPage() {
   const [editing, setEditing] = useState<Subject | 'new' | null>(null)
   const subjects = useLiveQuery(() => db.subjects.orderBy('name').toArray(), []) ?? []
   const filtered = subjects.filter((subject) => `${subject.name} ${subject.description}`.toLowerCase().includes(search.toLowerCase()))
-  return <div className="page"><header className="page-header"><div><p className="eyebrow">Study library</p><h1>Subjects</h1><p>Every subject contains its own PDF reviewers, notes, and question bank.</p></div><button className="button primary" onClick={() => setEditing('new')}><Plus /> Add subject</button></header><div className="toolbar"><label className="search"><Search /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search subjects" /></label></div>{filtered.length ? <div className="card-grid">{filtered.map((subject) => <SubjectCard key={subject.id} subject={subject} />)}</div> : <EmptyState icon={<BookOpen />} title={subjects.length ? 'No matching subjects' : 'No subjects yet'} text={subjects.length ? 'Try another search.' : 'Create a subject to organize your first study materials.'} action={!subjects.length ? <button className="button primary" onClick={() => setEditing('new')}><Plus /> Add subject</button> : undefined} />}{editing && <Modal title={editing === 'new' ? 'New subject' : 'Edit subject'} onClose={() => setEditing(null)}><SubjectForm subject={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} /></Modal>}</div>
+  return <div className="page"><header className="page-header" data-tour="subjects-header"><div><p className="eyebrow">Study library</p><h1>Subjects</h1><p>Every subject contains its own PDF reviewers, notes, and question bank.</p></div><button className="button primary" onClick={() => setEditing('new')}><Plus /> Add subject</button></header><div className="toolbar" data-tour="subjects-search"><label className="search"><Search /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search subjects" /></label></div><div data-tour="subjects-content">{filtered.length ? <div className="card-grid">{filtered.map((subject) => <SubjectCard key={subject.id} subject={subject} />)}</div> : <EmptyState icon={<BookOpen />} title={subjects.length ? 'No matching subjects' : 'No subjects yet'} text={subjects.length ? 'Try another search.' : 'Create a subject to organize your first study materials.'} action={!subjects.length ? <button className="button primary" onClick={() => setEditing('new')}><Plus /> Add subject</button> : undefined} />}</div>{editing && <Modal title={editing === 'new' ? 'New subject' : 'Edit subject'} onClose={() => setEditing(null)}><SubjectForm subject={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} /></Modal>}</div>
 }
 
 type SubjectTab = 'pdfs' | 'notes' | 'questions' | 'review'
@@ -748,7 +752,14 @@ function HistoryPage() {
   const [selected, setSelected] = useState<TestSession | null>(null)
   function responseText(answer: TestAnswer) { return answer.selectedAnswer || answer.choices?.find((choice) => choice.id === answer.selectedChoiceId)?.text || 'No answer' }
   function correctText(answer: TestAnswer) { return answer.correctAnswer || answer.choices?.find((choice) => choice.id === answer.correctChoiceId)?.text || 'Unavailable' }
-  return <div className="page"><header className="page-header"><div><p className="eyebrow">Learning record</p><h1>Test history</h1><p>Review scores, typed answers, skipped questions, and manual level decisions.</p></div></header>{sessions.length ? <div className="history-list">{sessions.map((session) => <button key={session.id} onClick={() => setSelected(session)}><span className={session.percentage >= 75 ? 'score good' : 'score'}>{session.percentage}%</span><div><strong>{session.subjectName}</strong><small>{LEVEL_NAMES[session.level]} · {dateLabel(session.completedAt)}{session.skippedCount ? ` · ${session.skippedCount} skipped` : ''}</small></div><div className="history-count">{session.correctCount}/{session.questionCount}<ChevronRight /></div></button>)}</div> : <EmptyState icon={<History />} title="No test history" text="Open a subject's Question Bank and complete an identification test." action={<Link className="button primary" to="/subjects">Open subjects</Link>} />}{selected && <Modal title={`${selected.subjectName} · ${selected.percentage}%`} onClose={() => setSelected(null)}><div className="history-detail"><p>{LEVEL_NAMES[selected.level]} · {dateLabel(selected.completedAt)} · {selected.correctCount} correct · {selected.skippedCount ?? 0} skipped</p>{selected.answers.map((answer, index) => <article key={`${answer.questionId}-${index}`}><span className={answer.wasSkipped ? 'answer-mark skipped' : answer.wasCorrect ? 'answer-mark correct' : 'answer-mark wrong'}>{answer.wasSkipped ? <ChevronRight /> : answer.wasCorrect ? <Check /> : <X />}</span><div><strong>{answer.prompt}</strong><p>{answer.wasSkipped ? 'Skipped without answering' : `Your answer: ${responseText(answer)}`}</p>{!answer.wasCorrect && !answer.wasSkipped && <p>Correct answer: {correctText(answer)}</p>}<small>{answer.explanation}</small>{answer.levelBefore !== answer.levelAfter && <small className="history-move">Moved from {LEVEL_NAMES[answer.levelBefore]} to {LEVEL_NAMES[answer.levelAfter]}</small>}</div></article>)}</div></Modal>}</div>
+  return <div className="page"><header className="page-header" data-tour="history-header"><div><p className="eyebrow">Learning record</p><h1>Test history</h1><p>Review scores, typed answers, skipped questions, and manual level decisions.</p></div></header><div data-tour="history-content">{sessions.length ? <div className="history-list">{sessions.map((session) => <button key={session.id} onClick={() => setSelected(session)}><span className={session.percentage >= 75 ? 'score good' : 'score'}>{session.percentage}%</span><div><strong>{session.subjectName}</strong><small>{LEVEL_NAMES[session.level]} · {dateLabel(session.completedAt)}{session.skippedCount ? ` · ${session.skippedCount} skipped` : ''}</small></div><div className="history-count">{session.correctCount}/{session.questionCount}<ChevronRight /></div></button>)}</div> : <EmptyState icon={<History />} title="No test history" text="Open a subject's Question Bank and complete an identification test." action={<Link className="button primary" to="/subjects">Open subjects</Link>} />}</div>{selected && <Modal title={`${selected.subjectName} · ${selected.percentage}%`} onClose={() => setSelected(null)}><div className="history-detail"><p>{LEVEL_NAMES[selected.level]} · {dateLabel(selected.completedAt)} · {selected.correctCount} correct · {selected.skippedCount ?? 0} skipped</p>{selected.answers.map((answer, index) => <article key={`${answer.questionId}-${index}`}><span className={answer.wasSkipped ? 'answer-mark skipped' : answer.wasCorrect ? 'answer-mark correct' : 'answer-mark wrong'}>{answer.wasSkipped ? <ChevronRight /> : answer.wasCorrect ? <Check /> : <X />}</span><div><strong>{answer.prompt}</strong><p>{answer.wasSkipped ? 'Skipped without answering' : `Your answer: ${responseText(answer)}`}</p>{!answer.wasCorrect && !answer.wasSkipped && <p>Correct answer: {correctText(answer)}</p>}<small>{answer.explanation}</small>{answer.levelBefore !== answer.levelAfter && <small className="history-move">Moved from {LEVEL_NAMES[answer.levelBefore]} to {LEVEL_NAMES[answer.levelAfter]}</small>}</div></article>)}</div></Modal>}</div>
+}
+
+// New-user walkthrough -----------------------------------------------------------
+const GUIDE_ICONS = [<Home />, <BookOpen />, <GraduationCap />, <History />, <ShieldCheck />]
+
+function AppGuidePage() {
+  return <div className="page guide-page"><header className="page-header"><div><p className="eyebrow">Interactive walkthrough</p><h1>App guide</h1><p>Let the guide take you through the real screens and point directly to the controls you need.</p></div></header><section className="panel guide-launcher"><span className="guide-launch-icon"><Play /></span><div><p className="eyebrow">Recommended for new users</p><h2>Take the full app tour</h2><p>The tour moves through every main page, dims the background, and highlights each important part of your study workflow.</p></div><button className="button primary" onClick={startFullTour}><Play /> Start full app tour</button></section><section className="guide-section"><div className="section-heading"><div><p className="eyebrow">Learn one area</p><h2>Choose a tour section</h2></div></div><div className="guide-tour-grid">{TOUR_PAGES.map((page, index) => <button key={page.path} className="guide-tour-card" onClick={() => startTourAt(index)}><span>{GUIDE_ICONS[index]}</span><div><strong>{page.label}</strong><small>{page.steps.length} guided step{page.steps.length === 1 ? '' : 's'}</small></div><ChevronRight /></button>)}</div></section><div className="guide-note"><CheckCircle2 /><p><strong>How it works</strong>You can exit with the close button at any time. The tour runs automatically only once per signed-in account, and you can replay it here whenever you want.</p></div></div>
 }
 
 // Backup and preferences ----------------------------------------------------------
@@ -765,7 +776,7 @@ function SettingsPage() {
   }
   async function requestPersistence() { const granted = await navigator.storage?.persist?.(); setMessage(granted ? 'Persistent storage is enabled.' : 'The browser did not grant persistent storage. Keep regular backups.') }
   const used = storageEstimate?.usage ? `${(storageEstimate.usage / 1024 / 1024).toFixed(1)} MB used` : 'Storage estimate unavailable'
-  return <div className="page"><header className="page-header"><div><p className="eyebrow">Data safety</p><h1>Settings & backup</h1><p>Your study records sync privately to your account, while backups provide an extra recovery copy.</p></div></header><div className="settings-grid"><section className="panel"><span className="setting-icon"><Download /></span><h2>Complete backup</h2><p>Download subjects, PDFs, notes, questions, progress, and test history into one file.</p><button className="button primary" onClick={() => void downloadBackup()}><Download /> Download backup</button></section><section className="panel"><span className="setting-icon"><Upload /></span><h2>Restore backup</h2><p>Replace the current database using a valid Reviewer Organizer backup.</p><input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(event) => void importBackup(event.target.files?.[0])} /><button className="button ghost" onClick={() => fileRef.current?.click()}><Upload /> Choose backup</button></section><section className="panel"><span className="setting-icon"><ShieldCheck /></span><h2>Storage protection</h2><p>{used}. Ask the browser to reduce the chance of automatic cleanup.</p><button className="button ghost" onClick={() => void requestPersistence()}><ShieldCheck /> Request protection</button></section></div>{message && <div className="notice">{message}</div>}<section className="panel learn-card"><h2>Important to remember</h2><p>GitHub contains the app’s public source code—not your private study records. PDFs sync through private Supabase Storage, while local browser storage supports migration and offline metadata.</p></section></div>
+  return <div className="page"><header className="page-header" data-tour="settings-header"><div><p className="eyebrow">Data safety</p><h1>Settings & backup</h1><p>Your study records sync privately to your account, while backups provide an extra recovery copy.</p></div></header><div className="settings-grid" data-tour="settings-options"><section className="panel"><span className="setting-icon"><Download /></span><h2>Complete backup</h2><p>Download subjects, PDFs, notes, questions, progress, and test history into one file.</p><button className="button primary" onClick={() => void downloadBackup()}><Download /> Download backup</button></section><section className="panel"><span className="setting-icon"><Upload /></span><h2>Restore backup</h2><p>Replace the current database using a valid Reviewer Organizer backup.</p><input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(event) => void importBackup(event.target.files?.[0])} /><button className="button ghost" onClick={() => fileRef.current?.click()}><Upload /> Choose backup</button></section><section className="panel"><span className="setting-icon"><ShieldCheck /></span><h2>Storage protection</h2><p>{used}. Ask the browser to reduce the chance of automatic cleanup.</p><button className="button ghost" onClick={() => void requestPersistence()}><ShieldCheck /> Request protection</button></section></div>{message && <div className="notice">{message}</div>}<section className="panel learn-card"><h2>Important to remember</h2><p>GitHub contains the app’s public source code—not your private study records. PDFs sync through private Supabase Storage, while local browser storage supports migration and offline metadata.</p></section></div>
 }
 
 // AuthGate is the root because account isolation must happen before any page loads.

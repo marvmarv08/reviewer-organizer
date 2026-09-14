@@ -79,10 +79,10 @@ export function GoogleClassroomConnect() {
   if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) return <div className="page"><section className="panel"><h1>Connect Google Classroom</h1><p>Google Classroom is not configured for this app yet.</p></section></div>
 
   return <div className="page">
-    <header className="page-header"><div><p className="eyebrow">Classroom sync</p><h1>Connect your Google Classroom</h1><p>Copy your active classes into Reviewer Organizer as persistent subjects.</p></div>
-      {google.connected ? <button className="button ghost" onClick={google.disconnect}><LogOut /> Disconnect</button> : <button className="button primary" onClick={() => google.login()}><CloudDownload /> Connect Google Classroom</button>}
+    <header className="page-header" data-tour="classroom-header"><div><p className="eyebrow">Classroom sync</p><h1>Connect your Google Classroom</h1><p>Copy your active classes into Reviewer Organizer as persistent subjects.</p></div>
+      {google.connected ? <button className="button ghost" onClick={google.disconnect}><LogOut /> Disconnect</button> : <button className="button primary" data-tour="classroom-connect-button" onClick={() => google.login()}><CloudDownload /> Connect Google Classroom</button>}
     </header>
-    <section className="panel classroom-connect-panel">
+    <section className="panel classroom-connect-panel" data-tour="classroom-connect">
       <div className="classroom-connect-intro"><School /><div><h2>Your classes</h2><p>Class names become subject names. Teacher names become subject descriptions.</p></div></div>
       {(google.error || message) && <div className="notice">{google.error || message}</div>}
       {busy && <p className="classroom-status"><RefreshCw className="spin" /> Contacting Google…</p>}

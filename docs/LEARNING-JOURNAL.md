@@ -143,3 +143,7 @@ The displayed Again, Hard, Good, and Easy times are calculated from the card's c
 Time passing does not automatically cause React to render again. A due-card screen therefore needs a small clock signal: Reviewer Organizer recalculates every five seconds during setup, every second during an active session, and immediately when the app returns from the background.
 
 A saved due time and an active-session queue solve different problems. The database remembers *when* a card is due across restarts and devices, while the queue decides *where* that card appears on the current screen. Again, Hard, and Good use both during the current session; Easy intentionally leaves the current queue while its due date is preserved for a future session.
+
+## 2026-09-13 — A useful app guide should lead to real actions
+
+A walkthrough becomes easier to understand when it teaches on top of the real interface. A spotlight dims unrelated areas, points to the current control, and explains why it matters. Reviewer Organizer stores only the tour's progress and completion flag—not fake study data—then lets the student replay the full tour or one section from App Guide. A visible exit matters because onboarding should guide the user without trapping them.

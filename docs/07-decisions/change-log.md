@@ -240,3 +240,11 @@ Skip when: You only need the active task or current state.
 - Persistence: Added additive question scheduling fields for state, due time, interval, ease, repetitions, and lapses, protected by the existing per-user Row Level Security policy.
 - Evidence: source lint, all 30 automated tests, TypeScript checking, and the production PWA build passed locally.
 - Remaining risk: the additive production Supabase migration and real-device visual acceptance are pending.
+
+## 2026-09-13 — Add an interactive new-user app guide
+
+- Change: Added an App Guide entry between Connect Google Classroom and Settings & Backup in the sidebar.
+- Change: Upgraded the guide from a static step page to an Inventory-style spotlight tour that highlights the real interface and moves across Dashboard, Subjects, Google Classroom, Test History, and Settings & Backup.
+- Change: Added a full tour, individual section tours, a one-time automatic launch per signed-in account, completion memory, and an always-available exit control. No mock study records or forced actions are used.
+- Evidence: lint, all forty-one automated tests including focused tour-launch coverage, TypeScript checking, and the production PWA build passed.
+- Remaining risk: final visual acceptance on Marvin's target laptop and phone remains recommended.
